@@ -65,3 +65,20 @@ console.log(greet());
 
 console.log(greet("Kryslin"));
 
+// 8. Ülesanne: liida igale elemendile juurde +5, et uuele muutujale omandaks
+
+const newArray = [1, 2, 3, 4, 5];
+
+const addedArray = newArray.map((element) => element +5);
+
+console.log(addedArray);
+
+// 9.  Ülesanne: erinevad parameetrid
+
+const threeParameters = newArray.map((element, index, array) => {
+    console.log(element, index, array)
+
+    return element + 5
+});
+
+console.log({threeParameters});
