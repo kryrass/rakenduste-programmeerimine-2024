@@ -6,6 +6,8 @@ import React, { useState } from 'react';
 import PropDrilling from './components/PropDrilling';
 import Show from './components/Show';
 import Context from './components/Context';
+import About from './components/About';
+
 
 function App() {
   const [show, setShow] = useState(true)
@@ -22,6 +24,7 @@ function App() {
       <Counter />
       <Name title="Kryslin" />
       <Name />
+      <About name="Kryslin" />
     </>
   );
 }
