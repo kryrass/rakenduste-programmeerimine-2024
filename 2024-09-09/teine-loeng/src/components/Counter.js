@@ -3,18 +3,18 @@ import React, { useState } from "react"
 const Counter = () => {
   const [counter, setCounter] = useState(0)
 
-  const modifyCounter = () => setCounter(prevCounter => prevCounter + 1)
+  const modifyCounter = (amount) => setCounter(prevCounter => prevCounter + amount)
 
   return (
     <>
       <h1>{counter}</h1>
 
-      
-      <button onClick={() => setCounter(counter + 1)}>sync+1</button>
+      {[+1, +5, +50, -1, -5, -50].map(element => (
+        <button key={element} onClick={() => modifyCounter(element)}>sync {element >= 0 ? `+${element}`: element}</button>
+      ))}
 
-      <button onClick={() => setTimeout(() => modifyCounter(), 500)}>
-        {" "}
-        async +1{" "}
+      <button onClick={() => setTimeout(() => modifyCounter(1), 2000)}>
+        async +1
       </button>
     </>
   )
