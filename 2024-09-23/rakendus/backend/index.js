@@ -8,11 +8,13 @@ app.use(cors());
 app.use(morgan("dev"));
 
 const catsRoutes = require("./routes/cats.routes");
+const todoRoutes = require("./routes/todos.routes");
 const exampleRoutes = require("./routes/example.routes");
 
 app.use(express.json());
 
 app.use("/cats", catsRoutes);
+app.use("/todos", todoRoutes);
 app.use("/examples", exampleRoutes);
 
 app.get("/", (req, res) => {
