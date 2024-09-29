@@ -1,57 +1,45 @@
 const crypto = require('crypto');
-const cats = [
 
-    {
-        "id": "273d6d9c-73b3-427b-9a7a-b04eba5bc231",
-        "name": "Kitty",
-        "createdAt": 1727099042168,
-        "updatedAt": 1727099054279,
-        "deleted": false
-    },
-    {
-        "id": "d0c54aec-1363-48eb-91cd-b924fedb81ca",
-        "name": "Snoopy",
-        "createdAt": 1727099330507,
-        "updatedAt": null,
-        "deleted": false
-    }
+let cats = [
+  { id: "7d613b93-fa3e-4ef3-a9d2-e09e5ca6e4e6", name: "Meow", createdAt: Date.now(), updatedAt: null, deleted: false },
+  { id: "2dc9ce08-d345-4fed-8560-4c6b66fb0836", name: "Kitty", createdAt: Date.now(), updatedAt: null, deleted: false },
 ];
 
 exports.create = (req, res) => {
-    const { name }= req.body;
+  const { name } = req.body;
 
-    const newCat ={
-        id: crypto.randomUUID(),
-        name:  name,
-        createdAt:Date.now(),
-        updatedAt: null,
-        deleted: false,
-    }
+  if (!name) return res.status(400).json({ type: "Error", message: "Peab sisaldama nime" });
 
-    cats.push(newCat); 
-
-    res.send(newCat);
+  const newCat = { id: crypto.randomUUID(), name, createdAt: Date.now(), updatedAt: null, deleted: false };
+  cats.push(newCat);
+  res.status(201).json(newCat);
 };
 
 exports.read = (req, res) => {
-    res.send(cats)
+  const activeCats = cats.filter(cat => !cat.deleted);
+  res.json(activeCats);
 };
 
 exports.update = (req, res) => {
-    const { id } = req.params;
-    const { name } = req.body;
+  const { id, name } = req.body;
+  const cat = cats.find(cat => cat.id === id);
 
-   
-    const cat = cats.find((cat) => cat.id === id);
+  if (!cat) return res.status(404).json({ type: "Error", message: "Kassi ei leitud" });
 
-    if (cat) {
-        
-        cat.name = name || cat.name; 
-        cat.updatedAt = Date.now(); 
+  if (name) {
+    cat.name = name;
+    cat.updatedAt = Date.now();
+  }
 
-        res.send(cat);
-    } else {
-        res.status(404).send({ message: "Cat not found" });
-    }
+  res.json(cat);
 };
-exports.delete = (req, res) => {};
+
+exports.delete = (req, res) => {
+  const { id } = req.params;
+  const cat = cats.find(cat => cat.id === id);
+
+  if (!cat) return res.status(404).json({ type: "Error", message: "Kassi ei leitud" });
+
+  cat.deleted = true;
+  res.sendStatus(204);
+};
