@@ -29,32 +29,34 @@ exports.read = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    const { id, name, priority } = req.body; 
-    const todo = todos.find(todo => todo.id === id);
+  const { id, name, priority } = req.body; 
+  const todo = todos.find(todo => todo.id === id);
   
-    if (!todo) return res.status(404).json({ type: "Error", message: "Todo ei leitud" });
+  if (!todo) return res.status(404).json({ type: "Error", message: "Todod ei leitud" });
   
-    if (name) {
+  if (name) {
       todo.name = name; 
-    }
+  }
   
-    if (priority !== undefined) {
+  if (priority !== undefined) {
       if (typeof priority !== 'number') {
-        return res.status(400).json({ type: "Error", message: "Priority peab olema number" });
+          return res.status(400).json({ type: "Error", message: "Tähtsus peab olema number" });
       }
       todo.priority = priority;
-    }
-    
-    todo.updatedAt = Date.now();
-    res.json(todo); 
-  };
+  }
   
+  todo.updatedAt = Date.now();
+  return res.status(200).json({ message: "Todo updated successfully", todo });
+};
+
+
+
 
 exports.delete = (req, res) => {
   const { id } = req.params;
   const todo = todos.find(todo => todo.id === id); 
 
-  if (!todo) return res.status(404).json({ type: "Error", message: "Todo ei leitud" });
+  if (!todo) return res.status(404).json({ type: "Error", message: "Todod ei leitud" });
 
   todo.deleted = true;
   res.sendStatus(204);

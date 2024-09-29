@@ -1,4 +1,4 @@
-import { Box, Button, Stack, TextField, Snackbar } from "@mui/material";
+import { Box, Button, TextField, Snackbar } from "@mui/material";
 import React, { useState } from "react";
 
 type SubmitCatProps = {
@@ -48,21 +48,33 @@ const SubmitCat = ({ fetchCats }: SubmitCatProps) => {
 
   return (
     <Box
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      component="form"
+      onSubmit={handleSubmit}
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ mt: 2, maxWidth: 300, margin: '0 auto' }}
     >
-      <form onSubmit={handleSubmit}>
-        <Stack>
-          <TextField
-            label="Sisesta kassi nimi"
-            onChange={(event) => setName(event.target.value)}
-            value={name} 
-          />
-          <Button type="submit">Lisa kass</Button>
-        </Stack>
-      </form>
+      <TextField
+        label="Sisesta kassi nimi"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        required
+        margin="normal"
+        fullWidth
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        sx={{ mt: 2 }}
+      >
+        Lisa kass
+      </Button>
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={2500} 
+        autoHideDuration={2500}
         onClose={handleSnackbarClose}
         message={snackbarMessage}
       />

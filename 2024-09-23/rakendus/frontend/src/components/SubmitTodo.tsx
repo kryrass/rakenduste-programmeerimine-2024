@@ -1,45 +1,44 @@
-import { Box, Button, Stack, TextField, Snackbar } from "@mui/material";
 import React, { useState } from "react";
+import { Button, TextField, Box, Snackbar } from "@mui/material";
 
-type SubmitTodoProps = {
+interface SubmitTodoProps {
   fetchTodos: () => void;
-};
+}
 
-const SubmitTodo = ({ fetchTodos }: SubmitTodoProps) => {
-  const [name, setName] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+const SubmitTodo: React.FC<SubmitTodoProps> = ({ fetchTodos }) => {
+  const [name, setName] = useState<string>("");
+  const [priority, setPriority] = useState<number>(0);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
-  const submitTodo = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const newTodo = { name, priority };
+
     try {
       const response = await fetch("http://localhost:8080/todos", {
         method: "POST",
         headers: {
-          Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: name }),
+        body: JSON.stringify(newTodo),
       });
 
-      if (response.ok) {
-        setSnackbarMessage("Todo lisamine õnnestus!");
-        setSnackbarOpen(true);
-      } else {
-        setSnackbarMessage("Todo lisamine ebaõnnestus.");
-        setSnackbarOpen(true);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
+      setName(""); 
+      setPriority(0);
+      fetchTodos();
+      setSnackbarMessage("Todo lisamine õnnestus!");
+      setSnackbarOpen(true);
     } catch (error) {
-      console.warn(error);
-      setSnackbarMessage("Midagi läks valesti");
+      console.error("Error adding todo:", error);
+      setSnackbarMessage("Todo lisamine ebaõnnestus.");
       setSnackbarOpen(true);
     }
-  };
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-
-    submitTodo();
-    setTimeout(fetchTodos, 100);
   };
 
   const handleSnackbarClose = () => {
@@ -48,21 +47,42 @@ const SubmitTodo = ({ fetchTodos }: SubmitTodoProps) => {
 
   return (
     <Box
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      component="form"
+      onSubmit={handleSubmit}
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center" 
+      sx={{ mt: 2, maxWidth: 300, margin: '0 auto' }} 
     >
-      <form onSubmit={handleSubmit}>
-        <Stack>
-          <TextField
-            label="Sisesta todo"
-            onChange={(event) => setName(event.target.value)}
-            value={name} 
-          />
-          <Button type="submit">Lisa todo</Button>
-        </Stack>
-      </form>
+      <TextField
+        label="Todo nimi"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+        margin="normal"
+        fullWidth
+      />
+      <TextField
+        label="Tähtsus"
+        type="number"
+        value={priority}
+        onChange={(e) => setPriority(Number(e.target.value))}
+        margin="normal"
+        fullWidth 
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        sx={{ mt: 2 }} 
+      >
+        Lisa Todo
+      </Button>
+
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={2500} 
+        autoHideDuration={2500}
         onClose={handleSnackbarClose}
         message={snackbarMessage}
       />
